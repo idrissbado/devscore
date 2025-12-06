@@ -22,7 +22,7 @@ pip install devscore
 Or install from source:
 
 ```bash
-git clone https://github.com/yourusername/devscore.git
+git clone https://github.com/idrissbado/devscore.git
 cd devscore
 pip install -e .
 ```
@@ -148,7 +148,7 @@ If you use this package in your research, please cite:
   title={devscore: A Python Package for Multi-dimensional Development Scoring},
   author={Idriss Olivier Bado},
   year={2025},
-  url={https://github.com/idrissb/devscore}
+  url={https://github.com/idrissbado/devscore}
 }
 ```
 

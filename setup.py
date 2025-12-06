@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="devscore",
-    version="0.1.0",
+    version="0.1.1",
     author="Idriss Olivier Bado",
     author_email="idriss.bado@example.com",
     description="Automatically compute Development Score for any geographic area using open data",

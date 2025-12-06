@@ -152,7 +152,12 @@ This package is inspired by academic research from:
 - Harvard Growth Lab
 - Nature papers on satellite-based poverty prediction
 
-**Read the full methodology paper:** [PAPER.md](PAPER.md) - A comprehensive article explaining the theoretical framework, algorithms, validation results, and practical applications.
+**📄 Read the full methodology paper:** [PAPER.md](https://github.com/idrissbado/devscore/blob/main/PAPER.md) - A comprehensive 8000+ word article explaining the theoretical framework, algorithms, validation results, and practical applications.
+
+**📚 Additional Documentation:**
+- [Conda Installation Guide](https://github.com/idrissbado/devscore/blob/main/CONDA_INSTALLATION.md)
+- [Quick Start Guide](https://github.com/idrissbado/devscore/blob/main/QUICKSTART.md)
+- [Example Scripts](https://github.com/idrissbado/devscore/tree/main/examples)
 
 ## Citation
 

@@ -19,7 +19,20 @@ It helps researchers, governments, and NGOs estimate local well-being and market
 pip install devscore
 ```
 
-Or install from source:
+### Anaconda/Conda Installation (Recommended)
+
+For better compatibility with geospatial dependencies, especially on Windows:
+
+```bash
+conda create -n devscore python=3.10 -y
+conda activate devscore
+conda install -c conda-forge geopandas rasterio osmnx scikit-learn xgboost -y
+pip install h3 earthengine-api devscore
+```
+
+See [CONDA_INSTALLATION.md](CONDA_INSTALLATION.md) for detailed conda setup instructions.
+
+### Install from Source
 
 ```bash
 git clone https://github.com/idrissbado/devscore.git
@@ -139,14 +152,16 @@ This package is inspired by academic research from:
 - Harvard Growth Lab
 - Nature papers on satellite-based poverty prediction
 
+**Read the full methodology paper:** [PAPER.md](PAPER.md) - A comprehensive article explaining the theoretical framework, algorithms, validation results, and practical applications.
+
 ## Citation
 
 If you use this package in your research, please cite:
 
 ```bibtex
 @software{devscore2025,
-  title={devscore: A Python Package for Multi-dimensional Development Scoring},
-  author={Idriss Olivier Bado},
+  title={DevScore: An Open-Source Framework for Multi-Dimensional Development Assessment Using Geospatial Data},
+  author={Bado, Idriss Olivier},
   year={2025},
   url={https://github.com/idrissbado/devscore}
 }

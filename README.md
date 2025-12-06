@@ -50,6 +50,36 @@ print(f"  - Food Security: {score['food_security']:.3f}")
 print(f"  - Mobile Money: {score['mobile_money']:.3f}")
 ```
 
+### Using Dynamic Weights
+
+Instead of fixed weights, use data-driven or expert-based methods:
+
+```python
+from devscore.scoring.final_score import DevelopmentScoreCalculator
+
+# Method 1: AHP (Analytical Hierarchy Process) - Expert-based
+calculator = DevelopmentScoreCalculator(weight_method='ahp')
+result = calculator.compute_development_score(lat, lon)
+
+# Method 2: Entropy - Data-driven, based on variation
+calculator = DevelopmentScoreCalculator(weight_method='entropy')
+
+# Method 3: Auto - Robust average of multiple methods
+calculator = DevelopmentScoreCalculator(weight_method='auto')
+
+# Method 4: Custom weights
+custom_weights = {
+    'poverty': 0.40,
+    'market_access': 0.25,
+    'infrastructure': 0.20,
+    'food_security': 0.10,
+    'mobile_money': 0.05
+}
+calculator = DevelopmentScoreCalculator(custom_weights=custom_weights)
+```
+
+See `examples/dynamic_weights.py` for comprehensive examples.
+
 ## Data Sources
 
 All data sources are open and freely accessible:
@@ -62,13 +92,27 @@ All data sources are open and freely accessible:
 
 ## Methodology
 
-The package implements a weighted aggregation of five key development indicators:
+The package implements a weighted aggregation of five key development indicators.
 
+**Weighting Methods:**
+
+The package supports multiple approaches to determine indicator weights:
+
+1. **Fixed Weights** (Legacy): Traditional research-based weights
+2. **AHP (Analytical Hierarchy Process)**: Expert judgment-based (default)
+3. **Entropy Method**: Data-driven, based on information content
+4. **PCA (Principal Component Analysis)**: Variance-based weighting
+5. **CRITIC**: Combines variability and correlation structure
+6. **Auto**: Robust average of multiple methods
+
+**Default AHP Formula:**
 ```
-Development Score = 0.35 × Poverty + 0.20 × Market Access + 
-                   0.20 × Infrastructure + 0.15 × Food Security + 
-                   0.10 × Mobile Money
+Development Score = w₁ × Poverty + w₂ × Market Access + 
+                   w₃ × Infrastructure + w₄ × Food Security + 
+                   w₅ × Mobile Money
 ```
+
+Where weights (w) are determined using AHP based on development economics research consensus. For fixed weights: w₁=0.35, w₂=0.20, w₃=0.20, w₄=0.15, w₅=0.10.
 
 Each component is normalized to a 0-1 scale where 1 indicates highest development.
 

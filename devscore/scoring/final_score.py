@@ -4,7 +4,7 @@ Combines all component scores into a single development index.
 """
 
 import numpy as np
-from typing import Dict
+from typing import Dict, Optional
 from ..data import (
     get_satellite_features,
     get_nightlights,
@@ -16,22 +16,46 @@ from .market_access import compute_market_access_score
 from .infrastructure import compute_infrastructure_score
 from .food_security import compute_food_security_score
 from .mobile_money import compute_mobile_money_score
+from .weights import determine_optimal_weights, AHPWeightCalculator
 
 
 class DevelopmentScoreCalculator:
     """
     Calculates comprehensive development score from all indicators.
+    Supports both fixed and dynamic weight determination.
     """
     
-    def __init__(self):
-        # Component weights (must sum to 1.0)
-        self.weights = {
-            'poverty': 0.35,
-            'market_access': 0.20,
-            'infrastructure': 0.20,
-            'food_security': 0.15,
-            'mobile_money': 0.10
-        }
+    def __init__(self, weight_method: str = 'ahp', custom_weights: Optional[Dict[str, float]] = None):
+        """
+        Initialize calculator with specified weighting method.
+        
+        Args:
+            weight_method: Method for determining weights ('fixed', 'ahp', 'entropy', 'pca', 'critic', 'auto')
+            custom_weights: Optional custom weights dict (overrides weight_method)
+        """
+        if custom_weights is not None:
+            # Use custom weights
+            self.weights = custom_weights
+            self.weight_method = 'custom'
+        elif weight_method == 'fixed':
+            # Legacy fixed weights based on research
+            self.weights = {
+                'poverty': 0.35,
+                'market_access': 0.20,
+                'infrastructure': 0.20,
+                'food_security': 0.15,
+                'mobile_money': 0.10
+            }
+            self.weight_method = 'fixed'
+        elif weight_method == 'ahp':
+            # AHP-based weights from expert judgment
+            ahp_calc = AHPWeightCalculator()
+            self.weights = ahp_calc.get_development_weights_ahp()
+            self.weight_method = 'ahp'
+        else:
+            # Will be calculated from data (entropy, pca, critic, auto)
+            self.weight_method = weight_method
+            self.weights = None  # Will be calculated when data is available
         
     def compute_development_score(self, lat: float, lon: float,
                                  buffer_km: float = 5.0,
@@ -148,6 +172,20 @@ class DevelopmentScoreCalculator:
             'raw_data': all_data
         }
         
+        # Calculate dynamic weights if needed
+        if self.weights is None:
+            component_scores_dict = {
+                'poverty': [component_scores['poverty']],
+                'market_access': [component_scores['market_access']],
+                'infrastructure': [component_scores['infrastructure']],
+                'food_security': [component_scores['food_security']],
+                'mobile_money': [component_scores['mobile_money']]
+            }
+            # For single location, use AHP as fallback
+            print(f"\nNote: Using AHP method for single-location analysis")
+            ahp_calc = AHPWeightCalculator()
+            self.weights = ahp_calc.get_development_weights_ahp()
+        
         # Print summary
         self._print_summary(result)
         
@@ -165,6 +203,19 @@ class DevelopmentScoreCalculator:
             return "developing"
         else:
             return "underdeveloped"
+    
+    def update_weights_from_data(self, component_scores: Dict[str, list]):
+        """
+        Update weights dynamically from historical component scores.
+        
+        Args:
+            component_scores: Dictionary with component names as keys and lists of scores as values
+        """
+        if self.weight_method in ['entropy', 'pca', 'critic', 'auto']:
+            self.weights = determine_optimal_weights(component_scores, method=self.weight_method)
+            print(f"\nWeights updated using {self.weight_method} method:")
+            for comp, weight in self.weights.items():
+                print(f"  {comp}: {weight:.3f}")
     
     def _print_summary(self, result: Dict):
         """Print formatted summary of results."""
